@@ -9,10 +9,18 @@
   "author": "Oluwamayowa Ashimi",
   "license": "ISC",
   "dependencies": {
+    "@types/jwt-decode": "^3.1.0",
     "express": "^4.17.1",
     "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
     "mongoose": "^5.12.5",
     "randomstring": "^1.1.5",
     "underscore": "^1.13.1"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/config/**/*.*"
+    ]
   }
 }

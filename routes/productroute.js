@@ -4,3 +4,5 @@ const {CheckAndCreateNewProduct} = require("../model/productmodel");
 router.post("/createProduct", CheckAndCreateNewProduct);
 
 module.exports = router;
+
+//product route

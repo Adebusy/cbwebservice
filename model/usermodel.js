@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const randStr = require("randomstring");
+const jwt = require("jsonwebtoken");
+//mongoose to create entity to the database
 const User = mongoose.model(
   "tblUsers",
   new mongoose.Schema({
@@ -16,7 +18,7 @@ const User = mongoose.model(
     Role: { type: String, required: true },
   })
 );
-
+//validate user request using Joi
 function validateUser(user) {
   const Schema = {
     title: Joi.string().max(5).required(),
@@ -30,23 +32,22 @@ function validateUser(user) {
   };
   return Joi.validate(user, Schema);
 }
+//login endpoint takes username and password
  async function LogMeIn(request, resp) {
    try {
-     console.log("nmnbbmb  "+ request.body.email);
-     console.log(request.body.password);
      let retLogin = await User.findOne({
        email: request.body.email.trim(),
        password: request.body.password.trim(),
      });
-     console.log(retLogin);
-     if (retLogin != null) return resp.status(200).send(retLogin);
+  //using jwt to secure response
+     if (retLogin != null) return resp.status(200).send(jwt.sign({title: retLogin.title, fullName: retLogin.fullName, homeAddress: retLogin.homeAddress, phone: retLogin.phone, dateOfBirth: retLogin.dateOfBirth, email: retLogin.email, Role: retLogin.Role}, "jwtPrivateKey"));
      return resp.status(400).send("Invalid userName or passwords");
    } catch (ex) {
      console.log(ex);
      return resp.status(400).send("Invalid userName or passwords");
    }
  }
-
+//
 async function CheckAndCreateNewUser(request, resp) {
   try {
     let validateReq = await validateUser(request.body);
@@ -89,7 +90,7 @@ async function getUserByEmail(request, response){
     console.log(ex);
   }
 }
-
+//update password 
  async function UpdatePassword(req, resp) {
    let yourString = randStr.generate(8);
    const updateRec = await User.updateOne(
@@ -103,6 +104,7 @@ async function getUserByEmail(request, response){
      .send("Unable to update recover password at the moment");
  }
 
+ //create new user function
 async function CreateUser(reqBody) {
   const newUser = new User({
     title: reqBody.title,

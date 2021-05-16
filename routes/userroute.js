@@ -7,3 +7,4 @@ router.get("/passwordRecovery/:email", UpdatePassword);
 router.get("/getUserByEmail/:email", getUserByEmail);
 
 module.exports = router;
+//user route

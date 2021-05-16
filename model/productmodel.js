@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+//create mongoose object
 const Product = mongoose.model(
   "tblProducts",
   new mongoose.Schema({
@@ -9,6 +10,7 @@ const Product = mongoose.model(
     status: { type: String, required: true, default:"Active" },
   })
 );
+//validate request
 function validateProduct(user) {
   const Schema = {
     productName: Joi.string().required(),

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const usermodel = require("../model/usermodel");
+//mongoose to create entity
 const myorder = mongoose.model(
   "tblorders",
   new mongoose.Schema({
@@ -11,23 +12,33 @@ const myorder = mongoose.model(
     productImageLink: { type: String, required: true },
     productPrice: { type: String, required: true},
     orderDate:{ type: "date", default: Date.now() },
-    paymentType:{ type: String, required: true },
+    nameOnCard: { type: String, required: true},
+    paymentType:{ type: String, required: true , default:"card"},
+    cardNumber:{ type: String, required: true },
+    expiryDate:{ type: String, required: true },
+    cvv:{ type: String, required: true },
+    myLocation:{ type: String, required: true },
     status: { type: String, required: true, default:"Active" },
   })
 );
-
+//validate request using Joi
 function validateOrder(order) {
   const Schema = {
+    nameOnCard: Joi.string().required(),
     userEmail: Joi.string().required(),
     contactNumber: Joi.string().required(),
     deliveryAddress: Joi.string().required(),
     productName: Joi.string().required(),
     productImageLink: Joi.string().required(),
     productPrice: Joi.string().required(),
-    paymentType: Joi.string().required(),
+    cardNumber: Joi.string().required(),
+    expiryDate: Joi.string().required(),
+    cvv: Joi.string().required(),
+    myLocation: Joi.string().required()
   };
   return Joi.validate(order, Schema);
 }
+//validate request and create user
 async function CheckAndCreateNewOrder(request, resp) {
   try {
       console.log(request.body);
@@ -55,9 +66,10 @@ async function CheckAndCreateNewOrder(request, resp) {
     console.log(ex);
   }
 }
-
+//create 
 async function placeOrder(reqBody) {
   const newUser = new myorder({
+    nameOnCard: reqBody.nameOnCard,
     userEmail: reqBody.userEmail,
     contactNumber: reqBody.contactNumber,
     deliveryAddress: reqBody.deliveryAddress,
@@ -65,12 +77,15 @@ async function placeOrder(reqBody) {
     productImageLink: reqBody.productImageLink,
     productPrice: reqBody.productPrice,
     orderDate: Date.now(),
-    paymentType:reqBody.paymentType,
+    cardNumber: reqBody.cardNumber,
+    expiryDate: reqBody.expiryDate,
+    cvv: reqBody.cvv,
+    myLocation: reqBody.myLocation,
     status: "Submitted"
   });
   const saveRec = await newUser.save();
   return saveRec._id;
 }
-
+//export end point
 module.exports.CheckAndCreateNewOrder = CheckAndCreateNewOrder;
 
